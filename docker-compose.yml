@@ -1,5 +1,6 @@
 version: '3.7'
 services:
+
   kafka1:
     image: cithub/kafka
     hostname: kafka1
@@ -74,7 +75,6 @@ services:
     hostname: zoo1
     container_name: zoo1
     restart: always
-    hostname: zoo1
     ports:
       - 2181:2181
     environment:
@@ -90,7 +90,6 @@ services:
     hostname: zoo2
     container_name: zoo2
     restart: always
-    hostname: zoo2
     ports:
       - 2182:2181
     environment:
@@ -145,37 +144,21 @@ services:
       - 3030:3030
       - 9092:9092
       - 9991:9991
+    networks:
+      - kafka
 
   ibmmq:
-    image: landoop/kafka-lenses-dev
-    hostname: lenses
-    container_name: lenses
-    depends_on:
-      - kafka1
-      - kafka2
-      - kafka3
-    environment:
-      ADV_HOST: 127.0.0.1
-      EULA: https://dl.lenses.stream/d/?id=f6b55fc2-0043-49eb-84eb-65eb4c69ec62
-      LICENSE_URL: https://dl.lenses.stream/d/?id=f6b55fc2-0043-49eb-84eb-65eb4c69ec62
-      LENSES_PORT: 9991
-      LENSES_KAFKA_BROKERS: PLAINTEXT://kafka1:9092,PLAINTEXT://kafka2:9092,PLAINTEXT://kafka3:9092
-      LENSES_SECURITY_MODE: BASIC
-      LENSES_SECURITY_GROUPS: |
-        [
-          {"name": "adminGroup", "roles": ["Admin", "DataPolicyWrite", "AlertsWrite", "TableStorageWrite"]},
-          {"name": "readGroup",  "roles": ["Read"]}
-        ]
-      LENSES_SECURITY_USERS: |
-        [
-          {"username": "admin", "password": "admin", "displayname": "Lenses Admin", "groups": ["adminGroup"]},
-          {"username": "read", "password": "read", "displayname": "Read Only", "groups": ["readGroup"]}
-        ]
+    image: ibmcom/mq
+    hostname: mq
+    container_name: mq
+    restart: always
     ports:
-      - 3030:3030
-      - 9092:9092
-      - 9991:9991
-
+      - "3302:22"
+      - "1414:1414"
+      - "9443:9443"
+    environment:
+      LICENSE: accept
+      MQ_QMGR_NAME: QM
     networks:
       - kafka
 
