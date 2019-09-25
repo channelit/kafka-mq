@@ -8,6 +8,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.Properties;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 @Component
@@ -19,11 +20,13 @@ public class FifoProducer implements ApplicationRunner {
     @Autowired
     private KafkaProducer<Integer, String> producer;
 
+    String[] clients = {"ABCD", "EFGH", "IJKL", "MNOP", "QRST", "UVWX"};
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        int messageNo = 1;
+        int messageNo = new Random().nextInt(4);
         while (true) {
-            String messageStr = "Message_" + messageNo;
+            String messageStr = "Message_" + clients[4];
             long startTime = System.currentTimeMillis();
 
             try {

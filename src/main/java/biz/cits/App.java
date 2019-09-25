@@ -1,4 +1,4 @@
-package biz.cits.kafka;
+package biz.cits;
 
 import java.util.Arrays;
 import java.util.Properties;
