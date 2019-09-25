@@ -13,16 +13,12 @@ services:
       - "8091:9092"
     environment:
       KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
-      SOLR_SSL: "true"
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "https://localhost:8983"]
-    #   interval: 30s
-    #   timeout: 10s
-    #   retries: 3
-    #   start_period: 40s
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092,PLAINTEXT_HOST://localhost:8091
     volumes:
       - ./data/kafka1/data:/kafka_data
-      - ./conf/server.properties:/conf/server.properties
+      - ./conf/server1.properties:/conf/server.properties
       - ./data/kafka1/logs:/kafka_logs
     command: ["./opt/kafka/bin/kafka-server-start.sh", "/conf/server.properties"]
     networks:
@@ -40,10 +36,12 @@ services:
       - "8092:9092"
     environment:
       KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
-      SOLR_SSL: "true"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092,PLAINTEXT_HOST://localhost:8092
     volumes:
       - ./data/kafka2/data:/kafka_data
-      - ./conf/server.properties:/conf/server.properties
+      - ./conf/server2.properties:/conf/server.properties
       - ./data/kafka2/logs:/kafka_logs
     command: ["./opt/kafka/bin/kafka-server-start.sh", "/conf/server.properties"]
     networks:
@@ -59,13 +57,15 @@ services:
       - zoo3
     volumes:
       - ./data/kafka3/data:/kafka_data
-      - ./conf/server.properties:/conf/server.properties
+      - ./conf/server3.properties:/conf/server.properties
       - ./data/kafka3/logs:/kafka_logs
     ports:
       - 8093:9092
     environment:
       KAFKA_ZOOKEEPER_CONNECT: zoo1:2181,zoo2:2181,zoo3:2181
-      SOLR_SSL: "true"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092,PLAINTEXT_HOST://localhost:8093
     command: ["./opt/kafka/bin/kafka-server-start.sh", "/conf/server.properties"]
     networks:
       - kafka
@@ -81,7 +81,9 @@ services:
       ZOO_MY_ID: 1
       ZOO_SERVERS: server.1=0.0.0.0:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
     volumes:
-      - ./data/zoo1/logs:/datalog
+      - ./data/zoo1/datalog:/datalog
+      - ./data/zoo1/data:/data
+      - ./data/zoo1/logs:/logs
     networks:
       - kafka
 
@@ -96,7 +98,9 @@ services:
       ZOO_MY_ID: 2
       ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=0.0.0.0:2888:3888 server.3=zoo3:2888:3888
     volumes:
-      - ./data/zoo2/logs:/datalog
+      - ./data/zoo2/datalog:/datalog
+      - ./data/zoo2/data:/data
+      - ./data/zoo2/logs:/logs
     networks:
       - kafka
 
@@ -111,7 +115,9 @@ services:
       ZOO_MY_ID: 3
       ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=0.0.0.0:2888:3888
     volumes:
-      - ./data/zoo3/logs:/datalog
+      - ./data/zoo3/datalog:/datalog
+      - ./data/zoo3/data:/data
+      - ./data/zoo3/logs:/logs
     networks:
       - kafka
 
@@ -130,6 +136,12 @@ services:
       LENSES_PORT: 9991
       LENSES_KAFKA_BROKERS: PLAINTEXT://kafka1:9092,PLAINTEXT://kafka2:9092,PLAINTEXT://kafka3:9092
       LENSES_SECURITY_MODE: BASIC
+      LENSES_ZOOKEEPER_HOSTS: |
+        [
+          {url:"zoo1:2181"},
+          {url:"zoo2:2181"},
+          {url:"zoo3:2181"}
+        ]
       LENSES_SECURITY_GROUPS: |
         [
           {"name": "adminGroup", "roles": ["Admin", "DataPolicyWrite", "AlertsWrite", "TableStorageWrite"]},
