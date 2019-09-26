@@ -13,7 +13,7 @@ import javax.jms.JMSException;
 
 
 @Configuration
-public class MQProperties {
+public class MqProperties {
 
     @Value("${mq.host}")
     private String host;
