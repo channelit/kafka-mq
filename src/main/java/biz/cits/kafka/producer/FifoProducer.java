@@ -12,7 +12,7 @@ import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 @Component
-public class FifoProducer implements ApplicationRunner {
+public class FifoProducer {
 
     @Value("${kafka.topic.id}")
     private String KAFKA_TOPIC;
@@ -22,7 +22,6 @@ public class FifoProducer implements ApplicationRunner {
 
     String[] clients = {"ABCD", "EFGH", "IJKL", "MNOP", "QRST", "UVWX"};
 
-    @Override
     public void run(ApplicationArguments args) throws Exception {
         int messageNo = new Random().nextInt(4);
         while (true) {

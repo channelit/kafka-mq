@@ -16,3 +16,4 @@ rm -rf data
 #### URLs:
 - MQ Admin: https://localhost:9443
 - Kafka UI: http://localhost:3030
+

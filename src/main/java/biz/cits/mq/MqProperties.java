@@ -46,8 +46,8 @@ public class MqProperties {
         cf.setStringProperty(WMQConstants.WMQ_QUEUE_MANAGER, QMGR);
         cf.setStringProperty(WMQConstants.WMQ_APPLICATIONNAME, appName);
         cf.setBooleanProperty(WMQConstants.USER_AUTHENTICATION_MQCSP, true);
-//        cf.setStringProperty(WMQConstants.USERID, appUser);
-//        cf.setStringProperty(WMQConstants.PASSWORD, appPswd);
+        cf.setStringProperty(WMQConstants.USERID, appUser);
+        cf.setStringProperty(WMQConstants.PASSWORD, appPswd);
         return cf;
     }
 
