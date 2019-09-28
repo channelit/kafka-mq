@@ -32,6 +32,7 @@ services:
       CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
       CONFLUENT_METRICS_ENABLE: 'true'
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
+      CONFLUENT_TOPIC_BOOTSTRAP_SERVERS: broker:29092
 
   schema-registry:
     image: confluentinc/cp-schema-registry:5.3.1
@@ -57,6 +58,7 @@ services:
     ports:
       - "8083:8083"
     environment:
+      CONFLUENT_TOPIC_BOOTSTRAP_SERVERS: localhost:29092
       CONNECT_BOOTSTRAP_SERVERS: 'broker:29092'
       CONNECT_REST_ADVERTISED_HOST_NAME: connect
       CONNECT_REST_PORT: 8083
@@ -94,6 +96,8 @@ services:
     ports:
       - "9021:9021"
     environment:
+      CONFLUENT_TOPIC_BOOTSTRAP_SERVERS: broker:29092
+      CONNECT_BOOTSTRAP_SERVERS: 'broker:29092'
       CONTROL_CENTER_BOOTSTRAP_SERVERS: 'broker:29092'
       CONTROL_CENTER_ZOOKEEPER_CONNECT: 'zookeeper:2181'
       CONTROL_CENTER_CONNECT_CLUSTER: 'connect:8083'

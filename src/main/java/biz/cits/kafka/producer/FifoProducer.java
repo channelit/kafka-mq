@@ -12,7 +12,7 @@ import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 @Component
-public class FifoProducer {
+public class FifoProducer implements ApplicationRunner {
 
     @Value("${kafka.topic.id}")
     private String KAFKA_TOPIC;

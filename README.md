@@ -17,3 +17,5 @@ rm -rf data
 - MQ Admin: https://localhost:9443
 - Kafka UI: http://localhost:3030
 
+### URLs for Confluent docker-compose (under /confluent, copied from Confluent Docker):
+- http://localhost:9021/
