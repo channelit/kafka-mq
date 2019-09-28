@@ -110,7 +110,7 @@ services:
       - kafka
 
   lenses:
-    image: landoop/kafka-lenses-dev
+    image: lensesio/lenses
     hostname: lenses
     container_name: lenses
     depends_on:
@@ -119,8 +119,7 @@ services:
       - kafka3
     environment:
       ADV_HOST: 127.0.0.1
-      EULA: https://dl.lenses.stream/d/?id=f6b55fc2-0043-49eb-84eb-65eb4c69ec62
-      LICENSE_URL: https://dl.lenses.stream/d/?id=f6b55fc2-0043-49eb-84eb-65eb4c69ec62
+      LICENSE_URL: https://dl.lenses.stream/ed/?id=b8a4f0ed-6add-40d2-b83f-2efd156b09f7
       LENSES_PORT: 9991
       LENSES_KAFKA_BROKERS: PLAINTEXT://kafka1:7091,PLAINTEXT://kafka2:7092,PLAINTEXT://kafka3:7093
       LENSES_SECURITY_MODE: BASIC
@@ -141,9 +140,10 @@ services:
           {"username": "read", "password": "read", "displayname": "Read Only", "groups": ["readGroup"]}
         ]
     ports:
-      - 3030:3030
-      - 9092:9092
+      - 9102:9102
       - 9991:9991
+    volumes:
+      - ./data/lenses:/data
     networks:
       - kafka
 
