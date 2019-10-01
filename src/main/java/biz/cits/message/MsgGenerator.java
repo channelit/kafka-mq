@@ -1,7 +1,4 @@
-package biz.cits.mq.producer;
-
-import com.ibm.mq.MQMessage;
-import org.springframework.stereotype.Component;
+package biz.cits.message;
 
 import java.util.Collections;
 import java.util.HashMap;

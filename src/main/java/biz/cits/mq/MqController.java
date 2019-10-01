@@ -2,7 +2,7 @@ package biz.cits.mq;
 
 import biz.cits.mq.consumer.MqConsumer;
 import biz.cits.mq.producer.MqProducer;
-import biz.cits.mq.producer.MsgGenerator;
+import biz.cits.message.MsgGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

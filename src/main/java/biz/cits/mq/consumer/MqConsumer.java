@@ -1,5 +1,6 @@
 package biz.cits.mq.consumer;
 
+import biz.cits.kafka.producer.FifoProducer;
 import com.ibm.mq.jms.MQQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +27,9 @@ public class MqConsumer implements MessageListener {
     @Value("${mq.qmgr}")
     private String QMGR;
 
+    @Autowired
+    FifoProducer fifoProducer;
+
     private static boolean transacted = true;
 
     @Autowired
@@ -50,6 +54,12 @@ public class MqConsumer implements MessageListener {
 
     @Override
     public void onMessage(Message message) {
+        fifoProducer.sendMessage(message.toString());
+        try {
+            message.acknowledge();
+        } catch (JMSException e) {
+            e.printStackTrace();
+        };
         System.out.println(message);
     }
 }
