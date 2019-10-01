@@ -14,7 +14,7 @@ rm -rf data
 ```
 
 #### URLs:
-- MQ Admin: https://localhost:9443
+- MQ Admin: http://localhost:9991/
 - Kafka UI: http://localhost:3030
 - Service:
     - Post Messages: http://localhost:8080/mq/send?numMessage=100

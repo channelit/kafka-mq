@@ -60,6 +60,5 @@ public class MqConsumer implements MessageListener {
         } catch (JMSException e) {
             e.printStackTrace();
         };
-        System.out.println(message);
     }
 }
