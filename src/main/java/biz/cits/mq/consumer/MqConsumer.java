@@ -54,8 +54,8 @@ public class MqConsumer implements MessageListener {
 
     @Override
     public void onMessage(Message message) {
-        fifoProducer.sendMessage(message.toString());
         try {
+            fifoProducer.sendMessage(((TextMessage)message).getText());
             message.acknowledge();
         } catch (JMSException e) {
             e.printStackTrace();

@@ -8,21 +8,24 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.Collections;
+import java.util.Properties;
 
 @Component
 public class FifoConsumer {
 
-    private Consumer consumer;
-
     @Value("${kafka.topic.id}")
     private String KAFKA_TOPIC;
 
-    @Autowired
-    public FifoConsumer(Consumer consumer) {
-        this.consumer = consumer;
+    private Properties consumerProperties;
+
+    public FifoConsumer(Properties consumerProperties) {
+        this.consumerProperties = consumerProperties;
     }
 
-    public void start(){
+    public void start() {
+        Consumer<String, String> consumer = new KafkaConsumer<>(consumerProperties);
+        consumer.subscribe(Collections.singletonList(KAFKA_TOPIC));
         int noMessageFound = 0;
         while (true) {
             ConsumerRecords<String, String> consumerRecords = consumer.poll(Duration.ofSeconds(1000));
@@ -39,7 +42,6 @@ public class FifoConsumer {
                 System.out.println("Record partition " + record.partition());
                 System.out.println("Record offset " + record.offset());
             });
-            // commits the offset of record to broker.
             consumer.commitAsync();
         }
     }
