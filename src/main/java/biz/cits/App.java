@@ -1,10 +1,15 @@
 package biz.cits;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Properties;
 
+import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -15,11 +20,17 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class App {
 
+    @Value("${kafka.topic.id}")
+    private String KAFKA_TOPIC;
+
     @Value("${kafka.server.url}")
     private String KAFKA_SERVER_URL;
 
     @Value("${kafka.client.id}")
     private String KAFKA_CLIENT_ID;
+
+    @Value("${kafka.consumer.group}")
+    private String KAFKA_CONSUMER_GROUP;
 
     @Bean
     public KafkaProducer<String, String> producer() {
@@ -27,6 +38,15 @@ public class App {
 //        props.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "bean-transactional-id");
         return new KafkaProducer<>(props);
     }
+
+
+    @Bean
+    public Consumer<String, String> consumer() {
+        Consumer<String, String> consumer = new KafkaConsumer<>(consumerProperties());
+        consumer.subscribe(Collections.singletonList(KAFKA_TOPIC));
+        return consumer;
+    }
+
 
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);
@@ -48,6 +68,19 @@ public class App {
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
         return properties;
+    }
+
+    @Bean
+    public Properties consumerProperties() {
+        Properties props = new Properties();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_SERVER_URL);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, KAFKA_CONSUMER_GROUP);
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 1);
+        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        return props;
     }
 
     @Bean
