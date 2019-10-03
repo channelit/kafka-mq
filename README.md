@@ -1,7 +1,13 @@
 ### Kafka - MQ 
 
 #### Steps:
-##### Startup:
+##### Build the app:
+```shell script
+docker build . -t kafka-mq
+docker tag kafka-mq kafka-mq:v1
+```
+
+##### Startup the environment:
 ```shell script
 docker -compose up -d zoo1 zoo2 zoo3
 docker-compose up -d
