@@ -1,8 +1,6 @@
 package biz.cits;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Properties;
+import java.util.*;
 
 import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCredential;
@@ -10,6 +8,8 @@ import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -19,6 +19,7 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -55,6 +56,7 @@ public class App {
 
     @Bean
     public KafkaProducer<String, String> producer() {
+        createTopic();
         Properties props = producerProperties();
 //        props.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "bean-transactional-id");
         return new KafkaProducer<>(props);
@@ -108,6 +110,14 @@ public class App {
         };
     }
 
+    @Bean
+    public Properties adminProperties() {
+        Properties properties = new Properties();
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_SERVER_URL);
+        return properties;
+    }
+
+
     public MongoClient mongoClient() {
         MongoCredential mongoCredential = MongoCredential.createCredential(DB_MONGO_USER, "admin", DB_MONGO_PSWD.toCharArray());
         MongoClient mongoClient = MongoClients.create(
@@ -124,4 +134,11 @@ public class App {
         return mongoClient().getDatabase(DB_MONGO_NAME);
     }
 
+    public void createTopic() {
+        AdminClient adminClient = AdminClient.create(adminProperties());
+        NewTopic newTopic = new NewTopic(KAFKA_TOPIC, 3, (short) 2);
+        List<NewTopic> newTopics = new ArrayList<>();
+        newTopics.add(newTopic);
+        adminClient.createTopics(newTopics);
+    }
 }
