@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Properties;
 
 import com.mongodb.MongoClientSettings;
+import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -46,6 +47,11 @@ public class App {
     @Value("${db.mongo.name}")
     private String DB_MONGO_NAME;
 
+    @Value("${db.mongo.user}")
+    private String DB_MONGO_USER;
+
+    @Value("${db.mongo.pswd}")
+    private String DB_MONGO_PSWD;
 
     @Bean
     public KafkaProducer<String, String> producer() {
@@ -64,7 +70,7 @@ public class App {
         Properties properties = new Properties();
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_SERVER_URL);
         properties.put(ProducerConfig.ACKS_CONFIG, "all");
-        properties.put(ProducerConfig.RETRIES_CONFIG, 1);
+        properties.put(ProducerConfig.RETRIES_CONFIG, 2);
         properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 1);
         properties.put(ProducerConfig.LINGER_MS_CONFIG, 10000);
         properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 33554432);
@@ -103,10 +109,12 @@ public class App {
     }
 
     public MongoClient mongoClient() {
+        MongoCredential mongoCredential = MongoCredential.createCredential(DB_MONGO_USER, DB_MONGO_NAME, DB_MONGO_PSWD.toCharArray());
         MongoClient mongoClient = MongoClients.create(
                 MongoClientSettings.builder()
                         .applyToClusterSettings(builder ->
                                 builder.hosts(Arrays.asList(new ServerAddress(DB_MONGO_HOST, DB_MONGO_PORT))))
+                        .credential(mongoCredential)
                         .build());
         return mongoClient;
     }
