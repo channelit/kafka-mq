@@ -109,7 +109,7 @@ public class App {
     }
 
     public MongoClient mongoClient() {
-        MongoCredential mongoCredential = MongoCredential.createCredential(DB_MONGO_USER, DB_MONGO_NAME, DB_MONGO_PSWD.toCharArray());
+        MongoCredential mongoCredential = MongoCredential.createCredential(DB_MONGO_USER, "admin", DB_MONGO_PSWD.toCharArray());
         MongoClient mongoClient = MongoClients.create(
                 MongoClientSettings.builder()
                         .applyToClusterSettings(builder ->

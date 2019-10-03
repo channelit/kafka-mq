@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Properties;
 
 @Component
@@ -42,7 +43,9 @@ public class FifoConsumer {
                     continue;
             }
             consumerRecords.forEach(record -> {
-                dataStore.storeData(record.key(), record.key() + "," + record.value());
+                HashMap<String, String> records = new HashMap<>();
+                records.put(record.key(), record.value());
+                dataStore.storeData(record.key(), records);
                 System.out.println("Record Key " + record.key());
                 System.out.println("Record value " + record.value());
                 System.out.println("Record partition " + record.partition());

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 @Component
 public class DataStore {
@@ -22,17 +23,10 @@ public class DataStore {
         this.mongoDatabase = mongoDatabase;
     }
 
-    public void storeData(String collectionName, String records) {
+    public void storeData(String collectionName, HashMap<String, String> records) {
         MongoCollection collection = mongoDatabase.getCollection(collectionName);
-        String[] fields = records.split(",");
         Document doc = new Document("client", collectionName);
-        Arrays.asList(fields)
-                .forEach(
-                        field -> {
-                            doc.append("message", "database");
-                        }
-
-                );
+        records.forEach(doc::append);
         doc.append("source", MY_ID);
         collection.insertOne(doc);
 
