@@ -6,6 +6,9 @@
 docker -compose up -d zoo1 zoo2 zoo3
 docker-compose up -d
 ```
+- Create topic FIFO_TOPIC with replication=2, partitions=3 using UI
+
+
 ##### Cleanup:
 ```shell script
 docker-compose kill
@@ -21,5 +24,5 @@ rm -rf data
     - MQ Consumer: http://localhost:8080/mq/recv
     - Kafka Receiver: http://localhost:8080/kafka/recv
 
-### URLs for Confluent docker-compose (under /confluent, copied from Confluent Docker):
-- http://localhost:9021/
+#### URLs for Confluent docker-compose (under /confluent, copied from Confluent Docker):
+- UI: http://localhost:9021/

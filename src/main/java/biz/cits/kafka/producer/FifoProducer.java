@@ -4,6 +4,7 @@ import biz.cits.message.MsgParser;
 import kafka.common.KafkaException;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.errors.AuthorizationException;
 import org.apache.kafka.common.errors.OutOfOrderSequenceException;
@@ -28,26 +29,26 @@ public class FifoProducer {
     private String KAFKA_TOPIC;
 
     @Autowired
-    private KafkaProducer<String, String> producer;
-
-    @Autowired
     private Properties producerProperties;
 
     public void sendMessage(String message) {
-//        Producer<String, String> producer = new KafkaProducer<>(producerProperties, new StringSerializer(), new StringSerializer());
-//        producer.initTransactions();
         AbstractMap.SimpleEntry<String, String> splitMsg = MsgParser.parse(message);
+        producerProperties.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, splitMsg.getKey());
+        Producer<String, String> producer = new KafkaProducer<>(producerProperties, new StringSerializer(), new StringSerializer());
+        producer.initTransactions();
         try {
-//            producer.beginTransaction();
+            producer.beginTransaction();
             producer.send(
                     new ProducerRecord<>(KAFKA_TOPIC,
                             splitMsg.getKey(), splitMsg.getValue()));
-//            producer.commitTransaction();
+            producer.commitTransaction();
         } catch (ProducerFencedException | OutOfOrderSequenceException | AuthorizationException e) {
-//            producer.close();
+            e.printStackTrace();
+            producer.close();
         } catch (KafkaException e) {
-//            producer.abortTransaction();
+            e.printStackTrace();
+            producer.abortTransaction();
         }
-//        producer.close();
+        producer.close();
     }
 }

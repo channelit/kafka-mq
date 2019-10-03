@@ -1,5 +1,6 @@
 package biz.cits.kafka.consumer;
 
+import biz.cits.db.DataStore;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -17,10 +18,14 @@ public class FifoConsumer {
     @Value("${kafka.topic.id}")
     private String KAFKA_TOPIC;
 
+    private final DataStore dataStore;
+
     private Properties consumerProperties;
 
-    public FifoConsumer(Properties consumerProperties) {
+    @Autowired
+    public FifoConsumer(Properties consumerProperties, DataStore dataStore) {
         this.consumerProperties = consumerProperties;
+        this.dataStore = dataStore;
     }
 
     public void start() {
@@ -37,6 +42,7 @@ public class FifoConsumer {
                     continue;
             }
             consumerRecords.forEach(record -> {
+                dataStore.storeData(record.key(), record.key() + "," + record.value());
                 System.out.println("Record Key " + record.key());
                 System.out.println("Record value " + record.value());
                 System.out.println("Record partition " + record.partition());

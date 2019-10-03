@@ -4,6 +4,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Properties;
 
+import com.mongodb.MongoClientSettings;
+import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -32,6 +37,16 @@ public class App {
     @Value("${kafka.consumer.group}")
     private String KAFKA_CONSUMER_GROUP;
 
+    @Value("${db.mongo.host}")
+    private String DB_MONGO_HOST;
+
+    @Value("${db.mongo.port}")
+    private Integer DB_MONGO_PORT;
+
+    @Value("${db.mongo.name}")
+    private String DB_MONGO_NAME;
+
+
     @Bean
     public KafkaProducer<String, String> producer() {
         Properties props = producerProperties();
@@ -48,15 +63,14 @@ public class App {
     public Properties producerProperties() {
         Properties properties = new Properties();
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_SERVER_URL);
-//        properties.put(ProducerConfig.ACKS_CONFIG, "all");
-//        properties.put(ProducerConfig.RETRIES_CONFIG, 1);
-//        properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 1);
-//        properties.put(ProducerConfig.LINGER_MS_CONFIG, 10000);
-//        properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 33554432);
+        properties.put(ProducerConfig.ACKS_CONFIG, "all");
+        properties.put(ProducerConfig.RETRIES_CONFIG, 1);
+        properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 1);
+        properties.put(ProducerConfig.LINGER_MS_CONFIG, 10000);
+        properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 33554432);
         properties.put(ProducerConfig.CLIENT_ID_CONFIG, KAFKA_CLIENT_ID);
-//        properties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
-//        properties.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "test-transactional-id");
-//        properties.put(ProducerConfig.TRANSACTION_TIMEOUT_CONFIG,1000);
+        properties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
+        properties.put(ProducerConfig.TRANSACTION_TIMEOUT_CONFIG, 1000);
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
         return properties;
@@ -86,6 +100,20 @@ public class App {
             }
 
         };
+    }
+
+    public MongoClient mongoClient() {
+        MongoClient mongoClient = MongoClients.create(
+                MongoClientSettings.builder()
+                        .applyToClusterSettings(builder ->
+                                builder.hosts(Arrays.asList(new ServerAddress(DB_MONGO_HOST, DB_MONGO_PORT))))
+                        .build());
+        return mongoClient;
+    }
+
+    @Bean
+    public MongoDatabase mongoDatabase() {
+        return mongoClient().getDatabase(DB_MONGO_NAME);
     }
 
 }

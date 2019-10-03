@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.JMSProducer;
+import java.util.ArrayList;
 import java.util.Map;
 
 @RestController
@@ -32,8 +33,8 @@ public class MqController {
 
     @GetMapping(path = "send", produces = "application/json")
     public String sendMessages(@RequestParam int numMessage) {
-        Map<String, String> messages = MsgGenerator.getMmessages(numMessage);
-        messages.forEach((k, v) -> mqProducer.sendMessage(destination, jmsProducer, v));
+        ArrayList<Map.Entry<String, String>> messages = MsgGenerator.getMessages(numMessage);
+        messages.forEach((e) -> mqProducer.sendMessage(destination, jmsProducer, e.getValue()));
         return "done";
     }
 

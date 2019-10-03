@@ -1,5 +1,7 @@
 package biz.cits.mq.producer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +13,8 @@ import javax.jms.*;
 public class MqProducer {
 
     private final ConnectionFactory connectionFactory;
+
+    private final Logger logger = LoggerFactory.getLogger(MqProducer.class);
 
     @Value("${mq.queue.name}")
     private String queueName;
