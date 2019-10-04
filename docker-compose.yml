@@ -187,5 +187,73 @@ services:
     networks:
       - kafka
 
+  remote1:
+    image: kafka-mq:v1
+    restart: always
+    container_name: remote1
+    ports:
+      - 6081:8080
+    environment:
+      MY_ID: in-1
+      KAFKA_SERVER_URL: kafka1:7091,kafka2:7092,kafka3:7093
+      MQ_HOST: ibmmq
+    networks:
+      - kafka
+
+  remote2:
+    image: kafka-mq:v1
+    restart: always
+    container_name: remote2
+    ports:
+      - 6082:8080
+    environment:
+      MY_ID: in-2
+      KAFKA_SERVER_URL: kafka1:7091,kafka2:7092,kafka3:7093
+      MQ_HOST: ibmmq
+    networks:
+      - kafka
+
+  service1:
+    image: kafka-mq:v1
+    restart: always
+    container_name: service1
+    ports:
+      - 7081:8080
+    environment:
+      MY_ID: out-1
+      KAFKA_SERVER_URL: kafka1:7091,kafka2:7092,kafka3:7093
+      MQ_HOST: ibmmq
+      DB_MONGO_HOST: mongo
+    networks:
+      - kafka
+
+  service2:
+    image: kafka-mq:v1
+    restart: always
+    container_name: service2
+    ports:
+      - 7082:8080
+    environment:
+      MY_ID: out-2
+      KAFKA_SERVER_URL: kafka1:7091,kafka2:7092,kafka3:7093
+      MQ_HOST: ibmmq
+      DB_MONGO_HOST: mongo
+    networks:
+      - kafka
+
+  service3:
+    image: kafka-mq:v1
+    restart: always
+    container_name: service3
+    ports:
+      - 7083:8080
+    environment:
+      MY_ID: out-3
+      KAFKA_SERVER_URL: kafka1:7091,kafka2:7092,kafka3:7093
+      MQ_HOST: ibmmq
+      DB_MONGO_HOST: mongo
+    networks:
+      - kafka
+
 networks:
   kafka:
