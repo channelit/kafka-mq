@@ -1,0 +1,5 @@
+FROM alpine
+USER root
+RUN mkdir /app
+ADD ./conf /conf/.
+VOLUME /conf

@@ -1,0 +1,27 @@
+version: '3.7'
+services:
+
+  kafka1:
+    volumes:
+      - conf:/conf
+    command: ["./opt/kafka/bin/kafka-server-start.sh", "/conf/server1.properties"]
+
+  kafka2:
+    volumes:
+      - conf:/conf
+    command: ["./opt/kafka/bin/kafka-server-start.sh", "/conf/server2.properties"]
+
+  kafka3:
+    volumes:
+      - conf:/conf
+    command: ["./opt/kafka/bin/kafka-server-start.sh", "/conf/server3.properties"]
+
+  conf:
+    image: conf:v1
+    hostname: conf
+    container_name: conf
+    volumes:
+      - conf:/conf
+
+volumes:
+  conf:

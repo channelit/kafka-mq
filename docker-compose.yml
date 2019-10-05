@@ -224,6 +224,8 @@ services:
       KAFKA_SERVER_URL: kafka1:7091,kafka2:7092,kafka3:7093
       MQ_HOST: ibmmq
       DB_MONGO_HOST: mongo
+      KAFKA_CONSUMER_START: "true"
+      KAFKA_CLIENT_ID: service
     networks:
       - kafka
 
@@ -238,6 +240,8 @@ services:
       KAFKA_SERVER_URL: kafka1:7091,kafka2:7092,kafka3:7093
       MQ_HOST: ibmmq
       DB_MONGO_HOST: mongo
+      KAFKA_CONSUMER_START: "true"
+      KAFKA_CLIENT_ID: service
     networks:
       - kafka
 
@@ -252,6 +256,8 @@ services:
       KAFKA_SERVER_URL: kafka1:7091,kafka2:7092,kafka3:7093
       MQ_HOST: ibmmq
       DB_MONGO_HOST: mongo
+      KAFKA_CONSUMER_START: "true"
+      KAFKA_CLIENT_ID: service
     networks:
       - kafka
 

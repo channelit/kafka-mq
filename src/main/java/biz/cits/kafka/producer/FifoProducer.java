@@ -29,12 +29,10 @@ public class FifoProducer {
     private String KAFKA_TOPIC;
 
     @Autowired
-    private Properties producerProperties;
+    private KafkaProducer producer;
 
     public void sendMessage(String message) {
         AbstractMap.SimpleEntry<String, String> splitMsg = MsgParser.parse(message);
-        producerProperties.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, splitMsg.getKey());
-        Producer<String, String> producer = new KafkaProducer<>(producerProperties, new StringSerializer(), new StringSerializer());
         producer.initTransactions();
         try {
             producer.beginTransaction();
@@ -49,6 +47,5 @@ public class FifoProducer {
             e.printStackTrace();
             producer.abortTransaction();
         }
-        producer.close();
     }
 }

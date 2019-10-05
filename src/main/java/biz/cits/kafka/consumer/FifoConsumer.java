@@ -51,7 +51,6 @@ public class FifoConsumer {
                 System.out.println("Record partition " + record.partition());
                 System.out.println("Record offset " + record.offset());
             });
-            consumer.commitAsync();
         }
     }
 

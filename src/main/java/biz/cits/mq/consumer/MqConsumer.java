@@ -43,7 +43,7 @@ public class MqConsumer implements MessageListener {
         MQQueue queue = new MQQueue(QMGR, queueName);
         Session session;
         this.qc = this.connectionFactory.createConnection();
-        session = this.qc.createSession(transacted, Session.CLIENT_ACKNOWLEDGE);
+        session = this.qc.createSession(transacted, Session.SESSION_TRANSACTED);
         MessageConsumer consumer = session.createConsumer(queue);
         consumer.setMessageListener(this);
     }
