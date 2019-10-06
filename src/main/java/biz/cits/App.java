@@ -8,7 +8,9 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -67,6 +69,12 @@ public class App {
         return new KafkaProducer<>(props);
     }
 
+    @Bean
+    public KafkaConsumer consumer(){
+        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(consumerProperties());
+        return consumer;
+    }
+
 
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);
@@ -105,12 +113,12 @@ public class App {
     @Bean
     public Properties streamProperties() {
         Properties props = new Properties();
-        props.put(StreamsConfig.APPLICATION_ID_CONFIG, KAFKA_CLIENT_ID);
+        props.put(StreamsConfig.APPLICATION_ID_CONFIG, KAFKA_CONSUMER_GROUP);
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_SERVER_URL);
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         props.put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
-
+        props.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 10);
         return props;
     }
     @Bean

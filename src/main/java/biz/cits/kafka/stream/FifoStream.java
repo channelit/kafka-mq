@@ -27,7 +27,7 @@ public class FifoStream {
         this.dataStore = dataStore;
     }
 
-    public void streamProcessor() {
+    public void start() {
         StreamsBuilder builder = new StreamsBuilder();
         KStream<String, String> source = builder.stream(KAFKA_TOPIC);
         source.foreach((k, v) -> {
