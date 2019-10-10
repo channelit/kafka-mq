@@ -60,6 +60,9 @@ public class App {
     @Value("${db.mongo.pswd}")
     private String DB_MONGO_PSWD;
 
+    @Value("{kafka.partition.count}")
+    private Integer KAFKA_PARTITION_COUNT;
+
     @Bean
     public KafkaProducer<String, String> producer() {
         createTopic();
@@ -70,7 +73,7 @@ public class App {
     }
 
     @Bean
-    public KafkaConsumer consumer(){
+    public KafkaConsumer consumer() {
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(consumerProperties());
         return consumer;
     }
@@ -121,6 +124,7 @@ public class App {
         props.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 10);
         return props;
     }
+
     @Bean
     public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
         return args -> {
@@ -160,7 +164,7 @@ public class App {
 
     public void createTopic() {
         AdminClient adminClient = AdminClient.create(adminProperties());
-        NewTopic newTopic = new NewTopic(KAFKA_TOPIC, 3, (short) 2);
+        NewTopic newTopic = new NewTopic(KAFKA_TOPIC, KAFKA_PARTITION_COUNT, (short) 2);
         List<NewTopic> newTopics = new ArrayList<>();
         newTopics.add(newTopic);
         adminClient.createTopics(newTopics);
