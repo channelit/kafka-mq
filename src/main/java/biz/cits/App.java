@@ -18,6 +18,8 @@ import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.kafka.streams.StreamsConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -60,21 +62,20 @@ public class App {
     @Value("${db.mongo.pswd}")
     private String DB_MONGO_PSWD;
 
-    @Value("{kafka.partition.count}")
+    @Value("${kafka.partition.count}")
     private Integer KAFKA_PARTITION_COUNT;
 
     @Bean
-    public KafkaProducer<String, String> producer() {
+    public KafkaProducer<String, String> producer(@Qualifier("producerProperties") Properties producerProperties) {
         createTopic();
-        Properties props = producerProperties();
-        props.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, KAFKA_CLIENT_ID);
-        Producer<String, String> producer = new KafkaProducer<>(props, new StringSerializer(), new StringSerializer());
-        return new KafkaProducer<>(props);
+        producerProperties.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, KAFKA_CLIENT_ID);
+        Producer<String, String> producer = new KafkaProducer<>(producerProperties, new StringSerializer(), new StringSerializer());
+        return new KafkaProducer<>(producerProperties);
     }
 
     @Bean
-    public KafkaConsumer consumer() {
-        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(consumerProperties());
+    public KafkaConsumer consumer(@Qualifier("consumerProperties") Properties consumerProperties) {
+        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(consumerProperties);
         return consumer;
     }
 
@@ -146,6 +147,7 @@ public class App {
     }
 
 
+    @Bean
     public MongoClient mongoClient() {
         MongoCredential mongoCredential = MongoCredential.createCredential(DB_MONGO_USER, "admin", DB_MONGO_PSWD.toCharArray());
         MongoClient mongoClient = MongoClients.create(
@@ -158,8 +160,9 @@ public class App {
     }
 
     @Bean
-    public MongoDatabase mongoDatabase() {
-        return mongoClient().getDatabase(DB_MONGO_NAME);
+    @Autowired
+    public MongoDatabase mongoDatabase(MongoClient mongoClient) {
+        return mongoClient.getDatabase(DB_MONGO_NAME);
     }
 
     public void createTopic() {
