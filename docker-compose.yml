@@ -279,7 +279,7 @@ services:
       KAFKA_STREAM_START: "true"
       KAFKA_CLIENT_ID: service
       KAFKA_CONSUMER_GROUP: fanout
-      DB_MONGO_name:FIFO: FANOUT
+      DB_MONGO_NAME:FIFO: FANOUT
     networks:
       - kafka
 
