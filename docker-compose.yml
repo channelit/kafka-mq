@@ -264,24 +264,24 @@ services:
     networks:
       - kafka
 
-  service4:
-    image: kafka-mq:v1
-    restart: always
-    container_name: service4
-    ports:
-      - 7084:8080
-    environment:
-      MY_ID: fanout
-      KAFKA_SERVER_URL: kafka1:7091,kafka2:7092,kafka3:7093
-      MQ_HOST: ibmmq
-      DB_MONGO_HOST: mongo
-      KAFKA_CONSUMER_START: "false"
-      KAFKA_STREAM_START: "true"
-      KAFKA_CLIENT_ID: service
-      KAFKA_CONSUMER_GROUP: fanout
-      DB_MONGO_NAME:FIFO: FANOUT
-    networks:
-      - kafka
+#  service4:
+#    image: kafka-mq:v1
+#    restart: always
+#    container_name: service4
+#    ports:
+#      - 7084:8080
+#    environment:
+#      MY_ID: fanout
+#      KAFKA_SERVER_URL: kafka1:7091,kafka2:7092,kafka3:7093
+#      MQ_HOST: ibmmq
+#      DB_MONGO_HOST: mongo
+#      KAFKA_CONSUMER_START: "false"
+#      KAFKA_STREAM_START: "true"
+#      KAFKA_CLIENT_ID: service
+#      KAFKA_CONSUMER_GROUP: FANOUT-QA
+#      DB_MONGO_NAME:FIFO: FANOUT-QA
+#    networks:
+#      - kafka
 
 networks:
   kafka:
